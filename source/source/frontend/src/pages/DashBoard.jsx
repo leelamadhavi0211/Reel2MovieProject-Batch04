@@ -46,7 +46,6 @@ function Dashboard() {
 
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
- // const name = localStorage.getItem("name");
 
   return (
 
@@ -70,7 +69,6 @@ function Dashboard() {
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Reel2Movie
           </h1>
-         
 
           <p className="text-gray-300 max-w-xl">
             Identify the movie behind any reel, short video, screenshot,
@@ -176,7 +174,7 @@ function Dashboard() {
 
         <section className="max-w-4xl mx-auto p-10">
 
-          {result && <ResultCard data={result} />}
+          <ResultCard data={result} />
 
         </section>
 

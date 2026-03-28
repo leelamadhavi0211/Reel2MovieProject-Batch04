@@ -6,19 +6,8 @@ function UploadCard({ setResult, setLoading }) {
   const [mode, setMode] = useState("file");
   const [file, setFile] = useState(null);
   const [url, setUrl] = useState("");
-  const token = localStorage.getItem("token");
-  console.log("Sending token:", token);
-
-// for guest users
-const uploadCount = parseInt(localStorage.getItem("guestUploads") || "0");
 
   const handleUpload = async () => {
-
-    // ❌ block guest after 3 uploads
-if (!token && uploadCount >= 3) {
-  alert("Limit reached! Please login for unlimited uploads.");
-  return;
-}
 
     if (mode === "file" && !file) {
       alert("Please select a file");
@@ -32,8 +21,6 @@ if (!token && uploadCount >= 3) {
 
     setLoading(true);
 
-
-
     try {
 
       let response;
@@ -41,47 +28,53 @@ if (!token && uploadCount >= 3) {
       if (mode === "file") {
 
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append("media", file);
 
-       
-
-      response = await axios.post(
-        "http://127.0.0.1:8000/upload-file",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            ...(token&&{Authorization: `Bearer ${token}`}),
-          },
-          }
+        response = await axios.post(
+          "http://localhost:5000/upload-file",
+          formData
         );
 
       } else {
-            
-            response = await axios.post(
-          "http://127.0.0.1:8000/upload-url",
-          { url },
-          {
-            headers: {
-             ... (token && { Authorization: `Bearer ${token}` }),
-            },
-          }
+
+        response = await axios.post(
+          "http://localhost:5000/upload-url",
+          { url }
         );
+
       }
 
       setResult(response.data);
-      // ✅ increase guest upload count
-      if (!token) {
-        localStorage.setItem("guestUploads", uploadCount + 1);
-      }
 
     } catch (error) {
 
       console.log(error);
 
-      
       // temporary mock response (until backend exists)
 
+      setTimeout(() => {
+
+        setResult({
+          movie: "Inception",
+          genre: "Sci-Fi",
+          confidence: 0.91,
+          poster:
+            "https://image.tmdb.org/t/p/w500/qmDpIHrmpJINaRKAfWQfftjCdyi.jpg",
+          video: {
+            resolution: "1080p",
+            duration: "8s",
+            frames: "240"
+          },
+          audio: {
+            language: "English",
+            music: "Detected",
+            clarity: "High"
+          }
+        });
+
+        setLoading(false);
+
+      }, 1500);
 
       return;
     }
@@ -99,12 +92,6 @@ if (!token && uploadCount >= 3) {
       </h2>
 
       {/* Mode Toggle */}
-
-      <p className="text-sm text-gray-400 text-center mb-4">
-  {!token
-    ? `${3 - uploadCount} free uploads remaining`
-    : "Unlimited uploads available"}
-</p>
 
       <div className="flex justify-center gap-4 mb-6">
 

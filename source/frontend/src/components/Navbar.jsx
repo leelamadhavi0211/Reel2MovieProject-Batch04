@@ -1,33 +1,80 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
-  return (
-    <nav className="flex justify-between items-center p-5 bg-black/60 backdrop-blur">
 
-      <h1 className="text-2xl font-bold text-red-600">
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+  const name = localStorage.getItem("name");
+  const email = localStorage.getItem("email");
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
+  };
+
+  return (
+
+    <div className="flex justify-between items-center p-4 bg-black">
+
+      {/* Logo */}
+      <h1 className="text-xl font-bold text-red-600">
         Reel2Movie
       </h1>
 
-      <div className="space-x-4">
+      {/* Right Side */}
+      <div className="flex items-center gap-4">
 
-        <Link
-          to="/login"
-          className="px-4 py-2 border border-red-600 rounded hover:bg-red-600 transition"
-        >
-          Login
-        </Link>
+        {!token ? (
+          <>
+            <Link to="/login" className="hover:text-red-500">
+              Login
+            </Link>
 
-        <Link
-          to="/signup"
-          className="px-4 py-2 bg-red-600 rounded hover:bg-red-700 transition"
-        >
-          Signup
-        </Link>
+            <Link to="/signup" className="hover:text-red-500">
+              Signup
+            </Link>
+
+          
+          </>
+        ) : (
+          <>
+            {/* User Info */}
+            <div className="text-right">
+
+              <p className="text-sm text-white font-semibold">
+                Welcome, {name}
+              </p>
+
+              <p className="text-xs text-gray-400">
+                {email}
+              </p>
+
+            </div>
+
+            {/* Profile Circle */}
+            <div className="bg-red-600 w-8 h-8 rounded-full flex items-center justify-center font-bold">
+              {name?.charAt(0).toUpperCase()}
+            </div>
+            <Link to="/history"  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition" >
+              📜 View My History
+             </Link>
+            {/* Logout */}
+            <button
+              onClick={handleLogout}
+              className="bg-red-600 px-4 py-1 rounded hover:bg-red-700"
+            >
+              Logout
+            </button>
+          </>
+        )}
 
       </div>
 
-    </nav>
+    </div>
+
   );
+
 }
 
 export default Navbar;
